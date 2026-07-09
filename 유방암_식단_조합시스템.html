@@ -1,0 +1,570 @@
+Copyright 2026. [나어진 All rights reserved.
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>손순미 식단 by 아들</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --pine:#123B3F; --pine2:#1E5A5F; --paper:#EDF1F0; --card:#FFFFFF;
+    --ink:#132220; --mute:#566B68; --line:#CDD8D6;
+    --gold:#B0812E; --safe:#2E7D5B; --danger:#A8382E;
+    --shadow:0 10px 34px rgba(18,59,63,.10);
+    --data:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+    --ui:"Pretendard",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--ui); color:var(--ink); background:var(--paper);
+    -webkit-font-smoothing:antialiased; padding:26px 16px 70px; line-height:1.5}
+  .wrap{max-width:940px; margin:0 auto}
+  .eyebrow{font-family:var(--data); font-size:12px; letter-spacing:.15em; text-transform:uppercase;
+    color:var(--pine2); font-weight:600; display:flex; gap:10px; align-items:center}
+  .eyebrow::before{content:""; width:24px; height:2px; background:var(--gold)}
+  h1{font-size:clamp(23px,4vw,33px); font-weight:800; letter-spacing:-.02em; margin:11px 0 8px}
+  .sub{color:var(--mute); font-size:14.5px; max-width:660px}
+  .badges{display:flex; flex-wrap:wrap; gap:9px; margin:16px 0 4px}
+  .badge{font-family:var(--data); font-size:12px; font-weight:600; background:#E2EFEA;
+    color:var(--pine); border:1px solid #CADED7; border-radius:999px; padding:6px 12px}
+
+  /* tabs */
+  .tabs{display:flex; gap:8px; margin:22px 0 16px; border-bottom:2px solid var(--line)}
+  .tab{font-weight:700; font-size:15px; padding:11px 16px; cursor:pointer; color:var(--mute);
+    border:none; background:none; border-bottom:3px solid transparent; margin-bottom:-2px}
+  .tab.on{color:var(--pine); border-bottom-color:var(--gold)}
+  .panel{display:none} .panel.on{display:block}
+
+  /* rows / chips */
+  .rows{display:grid; gap:12px}
+  .row{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 15px; box-shadow:var(--shadow)}
+  .row .head{display:flex; align-items:center; gap:9px; margin-bottom:10px}
+  .row .dot{width:10px; height:10px; border-radius:3px}
+  .r1 .dot{background:#C0533E} .r2 .dot{background:#B0812E} .r3 .dot{background:#2E7D5B} .r4 .dot{background:#1E5A5F}
+  .row .name{font-weight:800; font-size:15.5px}
+  .row .hint{font-family:var(--data); font-size:11px; color:var(--mute); margin-left:auto}
+  .chips{display:flex; flex-wrap:wrap; gap:7px}
+  .chip{font-size:13.5px; font-weight:600; background:#F2F6F5; color:var(--ink);
+    border:1.5px solid var(--line); border-radius:999px; padding:7px 13px; cursor:pointer; transition:.12s}
+  .chip:hover{transform:translateY(-1px); border-color:var(--pine2)}
+  .r1 .chip.on{background:#B14A37;color:#fff;border-color:#B14A37}
+  .r2 .chip.on{background:#9C7128;color:#fff;border-color:#9C7128}
+  .r3 .chip.on{background:#2E7D5B;color:#fff;border-color:#2E7D5B}
+  .r4 .chip.on{background:#1E5A5F;color:#fff;border-color:#1E5A5F}
+
+  .controls{display:flex; gap:9px; margin:18px 0 4px; flex-wrap:wrap}
+  .btn{font-weight:700; font-size:14px; border-radius:11px; padding:11px 18px; cursor:pointer;
+    border:1.5px solid var(--pine); background:var(--pine); color:#fff; transition:.12s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:transparent; color:var(--pine)}
+
+  /* menu grid (mode B) */
+  .menugrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:9px}
+  .mbtn{text-align:left; background:var(--card); border:1.5px solid var(--line); border-radius:12px;
+    padding:12px 13px; cursor:pointer; transition:.12s; box-shadow:var(--shadow)}
+  .mbtn:hover{transform:translateY(-2px); border-color:var(--pine2)}
+  .mbtn .mn{font-weight:800; font-size:15px; color:var(--pine)}
+  .mbtn .mt{font-family:var(--data); font-size:10.5px; color:var(--mute); margin-top:3px}
+
+  /* recipe card */
+  .altwrap{margin-top:14px}
+  .altlab{font-family:var(--data); font-size:11.5px; color:var(--mute); margin-bottom:7px}
+  .altbtns{display:flex; flex-wrap:wrap; gap:7px}
+  .altbtn{font-size:13px; font-weight:700; background:#EAF3EF; color:var(--pine);
+    border:1px solid #CADED7; border-radius:999px; padding:6px 12px; cursor:pointer}
+  .altbtn:hover{background:#dcece6}
+
+  .recipe{margin-top:16px; background:var(--card); border:1px solid var(--line); border-radius:16px;
+    overflow:hidden; box-shadow:var(--shadow)}
+  .rhead{background:linear-gradient(150deg,#123B3F,#1B565A); color:#EAF2F0; padding:22px 24px}
+  .rhead .rname{font-size:clamp(22px,3.4vw,30px); font-weight:800; letter-spacing:-.01em}
+  .rhead .ren{font-family:var(--data); font-size:12.5px; color:#9FC7C2; margin-top:4px}
+  .rhead .meta{font-family:var(--data); font-size:12.5px; color:#CFE1DE; margin-top:10px; display:flex; flex-wrap:wrap; gap:6px 16px}
+  .rbody{padding:20px 24px}
+  .rsec{margin-bottom:18px}
+  .rsec h4{font-size:13px; font-family:var(--data); letter-spacing:.08em; color:var(--pine2); text-transform:uppercase; margin-bottom:9px}
+  .rsec ul{list-style:none; display:grid; gap:6px}
+  .rsec ul li{font-size:14.5px; padding-left:18px; position:relative; color:var(--ink)}
+  .rsec ul li::before{content:""; position:absolute; left:0; top:9px; width:7px; height:7px; border-radius:2px; background:var(--pine2)}
+  .rsec ol{list-style:none; counter-reset:st; display:grid; gap:11px}
+  .rsec ol li{counter-increment:st; font-size:14.5px; line-height:1.6; padding-left:38px; position:relative}
+  .rsec ol li::before{content:counter(st); position:absolute; left:0; top:0; width:26px; height:26px;
+    background:var(--pine); color:#fff; border-radius:8px; display:grid; place-items:center; font-family:var(--data); font-size:13px; font-weight:600}
+  .rtip{background:#EAF3EF; border-radius:10px; padding:13px 15px; font-size:13.5px; color:var(--pine); line-height:1.6}
+  .rtip b{color:var(--danger)}
+
+  .foot{margin-top:24px; font-size:12.5px; color:var(--mute); border-left:3px solid var(--line); padding-left:14px; line-height:1.6}
+  /* filters */
+  .filters{display:flex; flex-direction:column; gap:10px; margin-bottom:14px; background:var(--card);
+    border:1px solid var(--line); border-radius:14px; padding:14px 15px; box-shadow:var(--shadow)}
+  .fgroup{display:flex; align-items:center; gap:7px; flex-wrap:wrap}
+  .fglabel{font-family:var(--data); font-size:12px; color:var(--pine2); font-weight:600; min-width:42px}
+  .fbtn{font-size:13px; font-weight:600; background:#F2F6F5; color:var(--ink); border:1.5px solid var(--line);
+    border-radius:999px; padding:6px 13px; cursor:pointer; transition:.12s}
+  .fbtn:hover{border-color:var(--pine2)}
+  .fbtn.on{background:var(--pine); color:#fff; border-color:var(--pine)}
+  .fcount{font-family:var(--data); font-size:12px; color:var(--mute); margin:0 0 10px 2px}
+  .mtags{font-family:var(--data); font-size:10.5px; color:var(--pine2); margin-top:4px}
+  /* guide / faq */
+  .guide h3{font-size:17px; font-weight:800; margin:22px 0 8px; color:var(--pine)}
+  .guide p,.guide li{font-size:14.5px; line-height:1.65; color:var(--ink)}
+  .guide ul{margin:6px 0; list-style:none; display:grid; gap:6px}
+  .guide ul li{padding-left:16px; position:relative}
+  .guide ul li::before{content:""; position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:2px; background:var(--pine2)}
+  .gcard{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow); margin-bottom:14px}
+  .conv{width:100%; border-collapse:collapse; font-size:13.5px; margin-top:6px}
+  .conv td{padding:7px 9px; border-bottom:1px solid var(--line)}
+  .conv td:nth-child(odd){font-weight:700; color:var(--pine); white-space:nowrap}
+  .conv td.n{font-family:var(--data); font-weight:400; color:var(--ink)}
+  details.faq{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:0 16px; margin-bottom:9px; box-shadow:var(--shadow)}
+  details.faq summary{cursor:pointer; font-weight:700; font-size:14.5px; padding:13px 0; color:var(--pine); list-style:none}
+  details.faq summary::-webkit-details-marker{display:none}
+  details.faq summary::before{content:"Q  "; font-family:var(--data); color:var(--gold)}
+  details.faq[open] summary{border-bottom:1px solid var(--line)}
+  details.faq .ans{padding:12px 0 15px; font-size:14px; line-height:1.7; color:var(--mute)}
+  details.faq .ans b{color:var(--pine)}
+  @media (max-width:560px){ .row .hint{display:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">유방암 치료·회복기 · 저염·균형 식단</div>
+  <h1>손순미 식단 by 아들</h1>
+  <p class="sub">가족 다같이 이겨내 보아요. 무슨 일이 있어도 <b>우리는 항상 같은 편</b>이에요. 몸에 좋은 한 끼 함께 챙겨 보아요.</p>
+  <div class="badges">
+    <span class="badge">소금 ≤ 5g/일</span>
+    <span class="badge">국물 ≤ 0.5% (살짝 싱겁게)</span>
+    <span class="badge">탄·단·지 ≈ 50·20·30</span>
+    <span class="badge">단백질 1.0–1.5 g/kg</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" data-tab="G">① 안내 &amp; FAQ</button>
+    <button class="tab" data-tab="B">② 메뉴로 레시피 찾기</button>
+    <button class="tab" data-tab="A">③ 재료로 메뉴 찾기</button>
+  </div>
+
+  <!-- PANEL G: 안내 & FAQ -->
+  <div class="panel on" id="panelG">
+    <div class="guide">
+      <div class="gcard">
+        <h3 style="margin-top:0">한눈에 보는 기본 원칙</h3>
+        <ul>
+          <li><b>패턴이 핵심</b> — 채소·통곡물·콩·생선 위주의 지중해식/식물성 식단이 재발·사망 위험을 낮추는 것과 일관되게 연관됩니다.</li>
+          <li><b>줄일 것</b> — 술(피하기), 가공육(햄·소시지), 붉은 고기, 초가공식품, 첨가당·가당음료, 짠 국물·젓갈.</li>
+          <li><b>염도</b> — 하루 소금 ≤5g(≈1작은술). 국물은 ‘살짝 싱겁게(≤0.5%)’, 국물은 남기기.</li>
+          <li><b>탄·단·지 ≈ 50·20·30</b>, 단백질은 넉넉히(체중 1kg당 1.0~1.5g) — 치료 중 근육 유지가 중요.</li>
+          <li><b>체중 관리</b> — 과체중·비만은 재발 위험과 연관되니 건강 체중을 유지합니다.</li>
+        </ul>
+      </div>
+
+      <div class="gcard">
+        <h3 style="margin-top:0">항암치료 중 식품안전</h3>
+        <p>백혈구가 낮아지는 시기에는 감염 위험이 커집니다. <b>날것(회·생굴·반숙란)·저온살균 안 된 유제품·씻지 않은 생채소</b>를 피하고 충분히 익혀 드세요. 입맛이 없거나 소화가 힘들면 <b>죽·순한 국(닭죽·계란죽·북엇국·순두부탕)</b>을 소량씩 자주 드세요. <b>자몽·자몽주스</b>는 약물 상호작용 우려로 치료 중 피합니다.</p>
+      </div>
+
+      <div class="gcard">
+        <h3 style="margin-top:0">단위 환산 (g · ml)</h3>
+        <table class="conv">
+          <tr><td>1큰술</td><td class="n">≈ 15 ml</td><td>1작은술</td><td class="n">≈ 5 ml</td></tr>
+          <tr><td>1컵</td><td class="n">≈ 200 ml</td><td>밥 1공기</td><td class="n">≈ 210 g</td></tr>
+          <tr><td>두부 1모</td><td class="n">≈ 300 g</td><td>순두부 1봉</td><td class="n">≈ 350 g</td></tr>
+          <tr><td>물참치 1캔</td><td class="n">≈ 100 g(고형물)</td><td>채소 1줌</td><td class="n">≈ 50~70 g</td></tr>
+          <tr><td>생선 1토막</td><td class="n">≈ 100~120 g</td><td>새우 1마리(중)</td><td class="n">≈ 15 g</td></tr>
+          <tr><td>마늘 1쪽</td><td class="n">≈ 5 g</td><td>올리브유 1큰술</td><td class="n">≈ 14 g</td></tr>
+          <tr><td>소금 1작은술</td><td class="n">≈ 5 g (나트륨 ≈2000mg)</td><td>1꼬집</td><td class="n">≈ 0.3 g</td></tr>
+          <tr><td>불린 미역 1컵</td><td class="n">≈ 60 g</td><td>납작귀리 1컵</td><td class="n">≈ 80 g</td></tr>
+        </table>
+      </div>
+
+      <h3>자주 묻는 질문 (FAQ)</h3>
+      <details class="faq"><summary>콩·두부를 먹어도 되나요?</summary><div class="ans">네. 두부·두유·된장 같은 <b>통대두 식품은 안전하며</b>, 호르몬 양성 유방암에서도 하루 1~2회 정도는 재발·사망 위험을 낮추는 이로운 효과가 보고됩니다. 단, 단백질바·대체육의 <b>분리대두단백(가공 대두)</b>은 안전성 근거가 부족하니 통대두 위주로 드세요.</div></details>
+      <details class="faq"><summary>설탕을 완전히 끊어야 하나요?</summary><div class="ans">아니요. ‘설탕이 암을 키운다’는 극단적 통설은 근거가 약합니다. <b>첨가당·가당음료·디저트를 줄이는 것</b>이 핵심이며, 과일에 자연적으로 든 당은 문제되지 않습니다.</div></details>
+      <details class="faq"><summary>홍삼·건강보조제를 먹어도 되나요?</summary><div class="ans">보충제는 치료 약물과 <b>상호작용</b>하거나 근거가 불확실한 경우가 많습니다. 임의로 드시기 전에 반드시 <b>담당 의료진</b>과 상의하세요. 영양은 되도록 음식으로 채우는 것이 우선입니다.</div></details>
+      <details class="faq"><summary>항암 중 입맛이 없어요. 어떻게 먹죠?</summary><div class="ans">한 번에 많이보다 <b>소량씩 자주</b>, 부드러운 죽·수프·순한 국으로 시작하세요. 단백질(두부·달걀·닭·생선)을 조금씩이라도 챙기고, 냄새에 민감하면 <b>차갑거나 미지근하게</b> 드시면 편합니다.</div></details>
+      <details class="faq"><summary>국이 싱거워서 맛이 없어요.</summary><div class="ans">소금 대신 <b>마늘·생강·레몬·식초·후추·허브</b>와 <b>표고·다시마 육수</b>의 감칠맛으로 풍미를 채우세요. 며칠~2주면 싱거운 기준에 입맛이 적응합니다. 국물은 남기는 습관이 도움이 됩니다.</div></details>
+      <details class="faq"><summary>술은 조금도 안 되나요?</summary><div class="ans">알코올은 유방암과 관련된 <b>명확한 위험 요인</b>이라, 원칙적으로 피하는 것이 권장됩니다.</div></details>
+      <details class="faq"><summary>유기농이어야 하나요?</summary><div class="ans">유기농이 영양·안전 면에서 더 낫다는 근거는 <b>충분치 않습니다</b>. 일반 채소·과일도 <b>잘 씻어</b> 드시면 됩니다(항암 중엔 껍질 제거 권장).</div></details>
+
+      <div class="gcard" style="margin-top:14px; background:#EAF3EF">
+        위 내용은 일반 가이드이며 의료·영양 처방을 대신하지 않습니다. 개인 상태(항암 여부·수용체·검사 수치)에 맞춘 식단은 <b>담당 의료진·임상영양사</b>와 정하세요.
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL A -->
+  <div class="panel" id="panelA">
+    <div class="rows" id="rows"></div>
+    <div class="controls">
+      <button class="btn" id="gen">메뉴 찾기</button>
+      <button class="btn ghost" id="rand">🎲 랜덤</button>
+      <button class="btn ghost" id="reset">초기화</button>
+    </div>
+    <div id="altA"></div>
+    <div id="recipeA"></div>
+  </div>
+
+  <!-- PANEL B -->
+  <div class="panel" id="panelB">
+    <div class="filters" id="filters"></div>
+    <div class="menugrid" id="menugrid"></div>
+    <div id="recipeB"></div>
+  </div>
+
+  <p class="foot"><b>모든 메뉴는 저염·식물성 위주·저지방 조리로 암 치료기에 맞게 선별/조정</b>했습니다. 고나트륨·가공육·튀김류(김치찌개·부대찌개·젓갈·삼겹살 등)는 제외했고, 죽·순한 국 등 일부는 항암 중 입맛 없거나 소화가 힘들 때를 위한 것입니다. 일반 가이드용이며 의료·영양 처방을 대신하지 않습니다. 분량은 성인 2인분 기준입니다. 항암으로 백혈구가 낮은 시기에는 회·생굴·반숙란·씻지 않은 생채소를 피하고 충분히 익혀 드세요. 개인 목표 염도·단백질량은 담당 의료진·임상영양사와 정하시기 바랍니다.</p>
+</div>
+
+<script>
+/* ---------- ingredient rows ---------- */
+const DATA = {
+  protein:{name:"단백질",cls:"r1",hint:"1~2개",items:["두부","두유","병아리콩","렌틸콩","달걀","닭가슴살","흰살생선(대구)","연어","고등어","새우","그릭요거트","풋콩(에다마메)","참치(물참치)","바지락·조개"]},
+  grain:{name:"곡물",cls:"r2",hint:"1개",items:["현미","잡곡","귀리","퀴노아","통밀 파스타","통곡물빵","보리","고구마","메밀면"]},
+  veg:{name:"채소",cls:"r3",hint:"1~2개",items:["브로콜리","시금치","케일","파프리카","당근","애호박","버섯","토마토","양배추","아스파라거스","가지","미역·다시마","무","콩나물","오이","도라지·고사리"]},
+  season:{name:"양념",cls:"r4",hint:"1~2개",items:["올리브유","마늘","생강","레몬","저염간장","된장(소량)","허브(바질·로즈마리)","후추","참기름·들기름","식초","고춧가루(소량)","표고·다시마 육수","국간장(저염)","카레·강황","깨소금"]}
+};
+
+/* ---------- dish database (popular name first) ---------- */
+const DISHES = [
+ {id:"salmon", name:"연어 스테이크", en:"Pan-seared Salmon", time:"약 20분", level:"쉬움", note:"오메가-3·통곡물 균형",
+  tag:{protein:["연어"],grain:["퀴노아","현미"],veg:["아스파라거스","브로콜리","파프리카"],season:["레몬","올리브유","후추","마늘"]},
+  items:["연어 필렛 2조각(약 300g)","아스파라거스 8~10줄기 또는 브로콜리 1/2송이","익힌 퀴노아 또는 현미 1.5컵","올리브유 1큰술, 다진 마늘 1작은술","레몬 1/2개, 통후추 약간, 소금 2꼬집 이하"],
+  steps:["연어는 키친타월로 물기를 완전히 제거하고 후추와 소금 아주 소량만 뿌려 실온에 10분 둔다.","팬을 중강불로 달군 뒤 올리브유를 두르고, 껍질 쪽을 아래로 4분간 건드리지 말고 굽는다(눌러붙어야 바삭해진다).","뒤집어 3분 더 굽고, 팬 가장자리에 다진 마늘을 넣어 30초간 향을 낸다.","같은 팬에 아스파라거스를 넣어 2~3분 살짝 볶는다(아삭함 유지).","접시에 퀴노아를 깔고 연어·채소를 올린 뒤 레몬즙을 짜 뿌린다 — 소금 대신 산미로 간을 완성."],
+  tip:"소금은 굽기 전 아주 소량만. 마무리 간은 <b>레몬즙·후추</b>로 대체하면 짜지 않게 감칠맛이 산다."},
+
+ {id:"tofu-steak", name:"두부 스테이크", en:"Seared Tofu Steak", time:"약 18분", level:"쉬움", note:"통대두 단백질",
+  tag:{protein:["두부"],grain:["현미","잡곡"],veg:["버섯","애호박","파프리카"],season:["저염간장","마늘","참기름·들기름","후추"]},
+  items:["단단한 두부 1모(약 300g)","표고·양송이 버섯 1줌, 애호박 1/2개","익힌 현미 1.5컵","저염간장 1작은술, 다진 마늘 1작은술, 참기름 1/2작은술","올리브유 1큰술, 후추 약간"],
+  steps:["두부는 1.5cm 두께로 썰어 키친타월로 눌러 물기를 5분간 뺀다(그래야 노릇해진다).","팬에 올리브유를 두르고 중강불에서 두부를 앞뒤 각 3~4분씩 노릇하게 굽는다.","버섯·애호박을 팬 한쪽에 넣어 함께 2~3분 볶는다.","불을 약하게 줄이고 다진 마늘·저염간장을 소량 둘러 30초만 조린다(간장은 태우지 않게).","불을 끄고 참기름 몇 방울·후추로 마무리, 현미와 함께 낸다."],
+  tip:"저염간장은 <b>1작은술 이하</b>로. 조림장을 자작하게 끓이지 말고 향만 입히면 나트륨을 크게 줄일 수 있다."},
+
+ {id:"chicken-stirfry", name:"닭가슴살 채소볶음", en:"Chicken & Veg Stir-fry", time:"약 20분", level:"쉬움", note:"고단백·저지방",
+  tag:{protein:["닭가슴살"],grain:["현미","잡곡","고구마"],veg:["파프리카","양배추","당근","브로콜리"],season:["마늘","올리브유","후추","저염간장"]},
+  items:["닭가슴살 2쪽(약 250g)","파프리카·양배추·당근 합쳐 3컵","익힌 현미 1.5컵 또는 찐 고구마","올리브유 1큰술, 다진 마늘 1작은술","저염간장 1작은술, 후추 약간"],
+  steps:["닭가슴살은 한입 크기로 썰어 후추로 밑간하고 10분 둔다.","팬을 강불로 달궈 올리브유를 두르고 닭을 넣어 겉면이 하얗게 익을 때까지 4~5분 볶는다.","다진 마늘을 넣어 향을 낸 뒤 단단한 채소(당근)부터 넣고 2분, 파프리카·양배추를 넣어 2분 더 볶는다.","저염간장 1작은술만 팬 가장자리에 둘러 향을 입힌다(채소의 단맛을 살리려 소금은 생략).","현미 또는 고구마를 곁들여 낸다."],
+  tip:"채소를 <b>센 불에 짧게</b> 볶으면 물이 덜 나오고 간이 적어도 맛있다. 간장은 마지막에 소량만."},
+
+ {id:"lentil-stew", name:"렌틸 토마토 스튜", en:"Lentil & Tomato Stew", time:"약 30분", level:"보통", note:"식물성 단백·식이섬유",
+  tag:{protein:["렌틸콩","병아리콩"],grain:["통곡물빵","현미"],veg:["토마토","당근","양배추"],season:["마늘","올리브유","허브(바질·로즈마리)","후추"]},
+  items:["렌틸콩 1컵(또는 삶은 병아리콩)","토마토 2개(또는 홀토마토 1컵), 당근 1개, 양파 1/2개","다진 마늘 1큰술, 올리브유 1큰술","말린 허브(바질·오레가노) 1작은술, 후추 약간","물 또는 무염 채수 3컵, 통곡물빵 곁들임"],
+  steps:["냄비에 올리브유를 두르고 다진 마늘·양파를 약불에서 3분 볶아 향을 낸다.","깍둑 썬 당근을 넣어 2분 볶고, 토마토를 넣어 으깨가며 5분 끓인다.","렌틸콩과 물(채수)을 붓고 뚜껑을 덮어 중약불로 20분간 콩이 부드러워질 때까지 끓인다.","허브·후추로 향을 내고, 소금은 넣지 않거나 아주 소량만(토마토의 감칠맛으로 충분).","통곡물빵을 곁들여 스튜를 찍어 먹는다."],
+  tip:"토마토·허브의 <b>감칠맛과 향</b>이 소금을 대신한다. 짠 스톡 큐브 대신 무염 채수·물을 쓴다."},
+
+ {id:"cod-soup", name:"대구 맑은탕 (지리)", en:"Clear Cod Soup", time:"약 25분", level:"보통", note:"저지방·저염 국물",
+  tag:{protein:["흰살생선(대구)"],grain:["잡곡","현미"],veg:["애호박","미역·다시마","버섯"],season:["마늘","생강","표고·다시마 육수","고춧가루(소량)"]},
+  items:["대구(또는 흰살생선) 2토막","무 2cm, 애호박 1/2개, 표고버섯 2개, 대파 약간","표고·다시마 육수 4컵","다진 마늘 1작은술, 생강 약간","소금 아주 소량(2~3꼬집), 후추"],
+  steps:["다시마·표고로 낸 육수를 냄비에 붓고 무를 넣어 5분 끓인다(무가 국물의 단맛을 낸다).","대구를 넣고 중불로 7~8분, 거품을 걷어내며 끓인다.","애호박·표고·대파를 넣어 3분 더 끓인다.","다진 마늘·생강을 넣고, 간은 소금 2~3꼬집으로 최소화(국물은 ‘살짝 싱겁게’).","기호에 따라 고춧가루 소량, 후추로 마무리. 잡곡밥과 낸다."],
+  tip:"국물 염도는 <b>0.5% 이하</b>가 목표 — 한 술 떠 ‘조금 더 넣고 싶다’ 싶은 정도가 맞다. 국물은 다 마시지 않기."},
+
+ {id:"bibimbap", name:"채소 비빔밥", en:"Veggie Bibimbap", time:"약 30분", level:"보통", note:"채소 다양·통곡물",
+  tag:{protein:["달걀","두부"],grain:["현미","잡곡"],veg:["시금치","당근","버섯","애호박"],season:["참기름·들기름","저염간장","마늘","고춧가루(소량)"]},
+  items:["달걀 2개(또는 구운 두부)","시금치 1줌, 당근 1/2개, 애호박 1/2개, 버섯 1줌","익힌 현미 2공기","참기름 1작은술, 저염간장 1작은술, 다진 마늘 약간","(선택) 고추장 대신 고춧가루 약간+식초로 새콤하게"],
+  steps:["시금치는 데쳐 물기를 짜고 참기름·마늘 약간으로 무친다(소금 없이).","당근·애호박·버섯은 각각 기름 약간에 센 불로 살짝 볶는다.","달걀은 반숙 대신 완전히 익혀 프라이하거나, 두부를 노릇하게 굽는다.","현미밥 위에 나물과 달걀(두부)을 색색으로 올린다.","저염간장 1작은술+참기름으로만 비벼 먹는다. 매콤함은 고춧가루·식초로 조절."],
+  tip:"고추장·쌈장은 나트륨이 높다. <b>참기름+저염간장 소량</b>으로 비비면 훨씬 저염. 항암 중엔 달걀을 완전히 익힌다."},
+
+ {id:"mackerel", name:"고등어 구이", en:"Grilled Mackerel", time:"약 15분", level:"쉬움", note:"오메가-3 풍부",
+  tag:{protein:["고등어"],grain:["잡곡","현미"],veg:["양배추","무","브로콜리"],season:["레몬","후추","올리브유"]},
+  items:["고등어(순살) 2토막","양배추 채·무생채용 무 약간","익힌 잡곡밥 1.5컵","레몬 1/2개, 후추, 올리브유 약간"],
+  steps:["고등어는 키친타월로 물기를 닦고 후추만 뿌린다(소금 없이 — 생선 자체 간이 있다).","에어프라이어 200℃ 12분 또는 팬에 올리브유 약간 두르고 껍질 쪽부터 노릇하게 굽는다.","양배추는 살짝 데치거나 생채로 곁들인다.","다 구운 고등어에 레몬즙을 뿌려 비린내를 잡고 간을 산미로 살린다.","잡곡밥과 함께 낸다."],
+  tip:"고등어는 <b>소금 없이</b> 구워도 충분히 간간하다. 절인(간고등어) 대신 순살 생물을 쓰면 나트륨이 크게 준다."},
+
+ {id:"gambas", name:"새우 감바스", en:"Garlic Shrimp (Gambas)", time:"약 15분", level:"쉬움", note:"고단백·마늘 풍미",
+  tag:{protein:["새우"],grain:["통곡물빵","통밀 파스타"],veg:["파프리카","버섯","브로콜리"],season:["마늘","올리브유","고춧가루(소량)","후추"]},
+  items:["생새우 12~16마리","마늘 6쪽(편 썰기), 올리브유 3큰술","파프리카·버섯 1컵","고춧가루(또는 페페론치노) 약간, 후추","통곡물빵 또는 삶은 통밀 파스타"],
+  steps:["작은 팬(또는 무쇠팬)에 올리브유와 편 마늘을 넣고 약불로 3분, 마늘 향을 천천히 우린다.","새우와 파프리카·버섯을 넣고 중불로 3~4분, 새우가 분홍빛으로 익을 때까지 익힌다.","고춧가루·후추로 향을 내고 소금은 생략하거나 아주 소량.","불을 끄고 통곡물빵을 기름에 찍어 먹거나, 통밀 파스타에 버무린다."],
+  tip:"소금 대신 <b>마늘·올리브유의 풍미</b>로 완성. 빵은 기름을 너무 많이 흡수하지 않게 곁들임 정도로."},
+
+ {id:"yogurt-bowl", name:"그릭요거트 오트볼", en:"Greek Yogurt Oat Bowl", time:"약 5분", level:"아주 쉬움", note:"아침·간식·단백질",
+  tag:{protein:["그릭요거트"],grain:["귀리"],veg:["토마토"],season:["레몬"]},
+  items:["무가당 그릭요거트 1컵","납작귀리 3큰술(또는 뮤즐리)","제철 과일·베리 1/2컵, 견과 1큰술","(선택) 꿀 아주 소량 대신 과일의 단맛 활용"],
+  steps:["그릇에 그릭요거트를 담는다.","귀리와 견과를 올린다.","베리·과일을 얹는다(냉동 베리는 해동 후).","첨가당 없이 과일의 단맛으로 즐긴다. 항암 중엔 과일을 잘 씻어 껍질째보다 껍질을 제거해 먹는다."],
+  tip:"가당 요거트·시럽은 <b>첨가당</b>이 많다. 무가당 요거트+과일이 정답. 아침·항암 중 입맛 없을 때 부담 적은 단백질원."},
+
+ {id:"miso-soup", name:"된장 채소 두부탕", en:"Doenjang Tofu & Veg Soup", time:"약 20분", level:"쉬움", note:"발효 대두·따뜻한 국물",
+  tag:{protein:["두부","두유"],grain:["잡곡","현미"],veg:["애호박","버섯","미역·다시마"],season:["된장(소량)","마늘","표고·다시마 육수"]},
+  items:["두부 1/2모, 애호박 1/2개, 표고버섯 2개","표고·다시마 육수 4컵","된장 1/2큰술(적게)","다진 마늘 1작은술, 대파 약간"],
+  steps:["다시마·표고 육수를 끓이고 된장을 체에 걸러 풀되, 평소의 절반만 넣는다.","애호박·버섯을 넣어 5분 끓인다.","깍둑 썬 두부를 넣고 3분 더 끓인다.","다진 마늘·대파를 넣어 마무리. 국물은 ‘살짝 싱겁게’.","잡곡밥과 함께 낸다."],
+  tip:"된장은 나트륨이 높으니 <b>평소의 절반</b>만. 부족한 감칠맛은 표고·다시마 육수가 채운다. 국물은 남기기."},
+
+ {id:"quinoa-salad", name:"퀴노아 병아리콩 샐러드", en:"Quinoa Chickpea Salad", time:"약 15분", level:"쉬움", note:"식물성 단백·통곡물",
+  tag:{protein:["병아리콩","달걀"],grain:["퀴노아"],veg:["토마토","파프리카","시금치","케일"],season:["올리브유","레몬","식초","후추"]},
+  items:["익힌 퀴노아 1.5컵","삶은 병아리콩 1컵(또는 삶은 달걀 2개)","방울토마토·파프리카·어린잎 2컵","올리브유 1큰술, 레몬즙 1큰술, 식초 1작은술, 후추"],
+  steps:["퀴노아는 미리 삶아 식혀 둔다.","채소는 먹기 좋게 썰고, 병아리콩과 함께 볼에 담는다.","올리브유·레몬즙·식초·후추를 섞어 드레싱을 만든다(소금 없이).","드레싱을 붓고 가볍게 버무린다.","바로 먹거나 도시락으로 담는다."],
+  tip:"드레싱은 <b>레몬·식초의 산미</b>로 간을 대신 — 시판 드레싱은 나트륨·당이 많아 피한다."},
+
+ {id:"aglio", name:"통밀 알리오 올리오", en:"Whole-wheat Aglio e Olio", time:"약 20분", level:"보통", note:"통곡물·(선택)새우",
+  tag:{protein:["새우","닭가슴살"],grain:["통밀 파스타"],veg:["브로콜리","버섯","시금치"],season:["마늘","올리브유","고춧가루(소량)","후추"]},
+  items:["통밀 파스타 160g","마늘 5쪽(편), 올리브유 2.5큰술","브로콜리·버섯 2컵, (선택) 새우 8마리","페페론치노/고춧가루 약간, 후추, 면수 약간"],
+  steps:["파스타는 소금을 평소보다 적게 넣은 물에 포장 시간보다 1분 덜 삶는다(면수 1/2컵 남겨둔다).","팬에 올리브유·편 마늘을 약불로 3분 볶아 향을 낸다.","브로콜리·버섯(및 새우)을 넣어 중불로 3~4분 익힌다.","삶은 면과 면수를 조금 넣어 유화시키고, 고춧가루·후추로 향을 낸다(소금 추가 없이).","불을 끄고 올리브유 약간을 더해 윤기를 낸다."],
+  tip:"면 삶는 물의 소금을 줄이고, 간은 <b>마늘·올리브유·면수</b>의 유화로 완성. 치즈는 소량만."},
+
+ {id:"gondre", name:"곤드레 나물밥", en:"Gondre Herb Rice", time:"약 30분", level:"보통", note:"통곡물·나물·저염",
+  tag:{protein:["두부"],grain:["현미","잡곡"],veg:["버섯"],season:["참기름·들기름","저염간장","마늘","깨소금"]},
+  items:["삶은 곤드레 1컵(마른 것 30g 불려 사용)","현미·잡곡 2컵","들기름 1큰술, 다진 마늘 1작은술","양념장: 저염간장 1작은술+들기름+다진 파+깨(비빌 때 소량)"],
+  steps:["곤드레는 삶아 물기를 짜고 들기름·마늘로 조물조물 무친다.","불린 현미·잡곡 위에 곤드레를 얹어 밥을 짓는다.","다 되면 들기름을 살짝 둘러 고루 섞는다.","양념장은 저염간장 1작은술 기준으로 최소로 만들어 조금씩만 비벼 먹는다."],
+  tip:"양념장을 많이 넣으면 나트륨↑. <b>들기름·깨</b>로 고소함을 살리고 간장은 아주 소량만."},
+
+ {id:"tofu-jorim", name:"두부 조림", en:"Braised Tofu", time:"약 20분", level:"쉬움", note:"통대두·저염 조림",
+  tag:{protein:["두부"],grain:["현미","잡곡"],veg:["애호박","버섯"],season:["저염간장","마늘","고춧가루(소량)","참기름·들기름"]},
+  items:["두부 1모","저염간장 1큰술, 물 1/2컵, 다진 마늘 1작은술","대파, 고춧가루 약간, 들기름 1작은술","현미밥"],
+  steps:["두부를 도톰하게 썰어 팬에 기름 소량으로 앞뒤 노릇하게 지진다.","물 1/2컵+저염간장 1큰술+마늘+고춧가루로 자작한 양념을 만든다(설탕 없이).","두부를 넣고 중약불로 5~7분 조려 양념을 입힌다(국물을 바짝 졸이지 말 것).","대파·들기름으로 마무리, 현미밥과 낸다."],
+  tip:"조림간장은 <b>물로 희석</b>하고 바짝 졸이지 않아야 나트륨이 준다. 단맛은 양파·대파로."},
+
+ {id:"kongnamul", name:"콩나물국", en:"Soybean Sprout Soup", time:"약 15분", level:"아주 쉬움", note:"저염·개운함·소화 편함",
+  tag:{protein:["두부"],grain:["잡곡","현미"],veg:["콩나물","무"],season:["마늘","표고·다시마 육수","국간장(저염)"]},
+  items:["콩나물 2줌","다시마 육수 4컵","다진 마늘 1작은술, 대파","소금 2꼬집 또는 국간장 1작은술","(선택) 두부 1/4모"],
+  steps:["다시마 육수에 콩나물을 넣고 뚜껑을 덮어 5분 끓인다(중간에 열지 않아야 비리지 않다).","다진 마늘을 넣고 2분 더 끓인다.","간은 소금 2꼬집 또는 국간장 1작은술로 최소화한다.","대파를 넣어 마무리. 잡곡밥과 내고 국물은 남긴다."],
+  tip:"시원함은 콩나물·마늘·무에서 나온다. 국물 염도 <b>0.5% 이하</b> 목표, 국물은 다 마시지 않기."},
+
+ {id:"miyeok", name:"미역국", en:"Seaweed Soup", time:"약 25분", level:"쉬움", note:"미네랄·저염 버전",
+  tag:{protein:["바지락·조개","흰살생선(대구)","두부"],grain:["잡곡","현미"],veg:["미역·다시마"],season:["마늘","참기름·들기름","국간장(저염)"]},
+  items:["불린 미역 2컵","들기름 1큰술, 다진 마늘 1작은술","다시마 육수 5컵","(선택) 바지락 1줌 또는 흰살생선 소량","국간장 1작은술"],
+  steps:["냄비에 들기름을 두르고 불린 미역·마늘을 3분 볶는다.","다시마 육수를 붓고 중불로 15분 끓인다.","조개나 흰살생선을 넣어 5분 더 끓인다.","국간장 1작은술로만 간한다(소금·소고기 과다 대신 재료 감칠맛 활용)."],
+  tip:"소고기+국간장 과다는 나트륨↑. <b>들기름·조개·다시마</b>의 감칠맛으로 간을 최소화."},
+
+ {id:"bugeo", name:"북엇국", en:"Dried Pollock Soup", time:"약 20분", level:"쉬움", note:"부드러움·저염·항암 중 무난",
+  tag:{protein:["달걀","두부"],grain:["잡곡"],veg:["무","콩나물"],season:["마늘","참기름·들기름","국간장(저염)"]},
+  items:["북어채 1줌(물에 헹궈 짠기 제거)","들기름 1큰술, 다진 마늘 1작은술","다시마 육수 5컵, 무 약간","달걀 1개, 두부 1/4모, 국간장 1작은술"],
+  steps:["북어채는 물에 잠깐 헹궈 소금기를 뺀 뒤 들기름·마늘로 볶는다.","다시마 육수와 무를 넣어 10분 끓인다.","두부를 넣고 3분, 풀어둔 달걀을 돌려 넣는다.","국간장 1작은술로 간을 최소화, 파로 마무리."],
+  tip:"북어채는 <b>헹궈서 짠기를 빼는</b> 것이 핵심. 부드러워 소화가 편해 항암 중에도 무난."},
+
+ {id:"japchae", name:"채소 잡채", en:"Veggie Japchae", time:"약 35분", level:"보통", note:"채소 다양·양념 절제(가끔)",
+  tag:{protein:[],grain:[],veg:["시금치","당근","파프리카","버섯","양배추"],season:["저염간장","참기름·들기름","마늘","깨소금"]},
+  items:["당면 100g","시금치·당근·파프리카·버섯·양파 넉넉히","저염간장 1.5큰술, 참기름 1큰술, 다진 마늘 1작은술","(선택) 소고기 살코기 소량 50g, 깨 약간, 설탕은 생략/아주 소량"],
+  steps:["당면은 삶아 찬물에 헹구고 참기름에 버무린다.","채소는 색깔별로 각각 기름 약간에 센 불로 살짝 볶는다(소금 없이).","(선택) 소고기 살코기를 저염간장 약간으로 볶는다.","당면·채소를 담아 저염간장 1.5큰술+참기름+마늘로 버무린다(설탕 최소).","깨를 뿌려 마무리."],
+  tip:"잡채는 간장·설탕이 많아지기 쉽다. <b>채소 비중↑, 간장·설탕은 절반 이하</b>로. 자주보다 가끔."},
+
+ {id:"namul", name:"모둠 나물무침", en:"Seasoned Namul", time:"약 25분", level:"보통", note:"채소·식이섬유·저염",
+  tag:{protein:[],grain:["잡곡","현미"],veg:["시금치","도라지·고사리","콩나물"],season:["참기름·들기름","마늘","국간장(저염)","깨소금"]},
+  items:["시금치 1줌, 고사리 1줌, 도라지 1줌(또는 콩나물)","들기름·참기름 각 1작은술","다진 마늘, 국간장 1작은술(전체), 깨 약간"],
+  steps:["시금치·콩나물은 데쳐 물기를 짠다. 고사리·도라지는 삶아 준비.","각 나물을 따로 들기름·마늘·소량의 국간장으로 조물조물 무친다.","간은 나물 전체에 국간장 1작은술 수준으로 최소화한다.","깨를 뿌려 잡곡밥과 낸다."],
+  tip:"나물은 간을 적게 해도 <b>들기름·마늘·깨</b>로 충분히 맛있다. 반찬은 밥과 먹으니 약간 싱겁게."},
+
+ {id:"sundubu", name:"순두부 채소탕", en:"Soft Tofu & Veg Stew", time:"약 20분", level:"쉬움", note:"부드러움·통대두·저염",
+  tag:{protein:["두부","달걀"],grain:["잡곡"],veg:["애호박","버섯","콩나물"],season:["마늘","고춧가루(소량)","표고·다시마 육수"]},
+  items:["순두부 1봉","다시마 육수 2컵","애호박·버섯·콩나물 약간","다진 마늘, 고춧가루 약간","달걀 1개, 대파, 소금 2꼬집"],
+  steps:["뚝배기에 육수를 붓고 채소를 넣어 5분 끓인다.","순두부를 큼직하게 떠 넣고 3분 끓인다.","고춧가루·마늘로 향을 내고 소금은 2꼬집만.","달걀을 넣고 대파로 마무리. 잡곡밥과 낸다."],
+  tip:"고추장·다량 소금 대신 <b>고춧가루·마늘</b>로 얼큰함만. 국물은 남기고, 순두부는 부드러워 항암 중에도 적합."},
+
+ {id:"samgyetang", name:"삼계탕", en:"Ginseng Chicken Soup", time:"약 60분", level:"보통", note:"보양·저염(소금 따로)",
+  tag:{protein:["닭가슴살"],grain:["현미","보리"],veg:[],season:["마늘","생강"]},
+  items:["작은 닭 1마리 또는 닭다리·가슴 400g","불린 현미/찹쌀 1/3컵, 마늘 6쪽, 대추 3개, 수삼 1뿌리","생강 약간, 대파","소금·후추는 먹을 때 아주 소량 따로"],
+  steps:["닭은 껍질·기름을 떼고 뱃속에 불린 쌀·마늘·대추·수삼을 채운다.","냄비에 닭이 잠기게 물을 붓고 생강을 넣어 센 불로 끓인 뒤 중약불 40~50분 곤다.","떠오르는 거품·기름을 걷어낸다(지방↓).","국물엔 소금을 넣지 말고, 먹을 때 소금을 아주 소량만 찍어 조절.","대파를 올려 낸다."],
+  tip:"국물에 소금을 미리 넣지 말고 <b>먹을 때 최소로</b>. 껍질·기름을 걷으면 지방↓. 회복기 단백질 보양식."},
+
+ {id:"jeongol", name:"두부 버섯 전골", en:"Tofu Mushroom Hot Pot", time:"약 25분", level:"보통", note:"채소 다양·저염 채수",
+  tag:{protein:["두부"],grain:["잡곡"],veg:["버섯","애호박","양배추","무"],season:["마늘","표고·다시마 육수","고춧가루(소량)","국간장(저염)"]},
+  items:["두부 1모, 모둠 버섯 2컵","배추·애호박·무 넉넉히","다시마 육수 4컵","다진 마늘, 고춧가루 약간, 국간장 1큰술"],
+  steps:["전골냄비에 채소·버섯을 돌려 담고 두부를 올린다.","다시마 육수를 붓고 끓인다.","다진 마늘·고춧가루 약간, 국간장 1큰술로만 간한다.","끓으면 건더기 위주로 먹고 국물은 남긴다."],
+  tip:"전골 육수는 <b>채수 기반</b>으로. 간은 국간장 최소, 감칠맛은 버섯·무에서. 건더기 중심으로 먹기."},
+
+ {id:"fish-jjim", name:"흰살생선 찜", en:"Steamed White Fish", time:"약 20분", level:"쉬움", note:"저지방·저염·부드러움",
+  tag:{protein:["흰살생선(대구)","연어"],grain:["현미","잡곡"],veg:["애호박","당근","버섯","무"],season:["생강","마늘","저염간장","참기름·들기름"]},
+  items:["흰살생선(대구/광어) 2토막","무·애호박·당근·버섯 채썰기","생강채·마늘, 대파","저염간장 1작은술, 참기름 몇 방울, 현미밥"],
+  steps:["찜기에 채썬 채소를 깔고 생선을 올린다.","생강채·마늘을 얹어 센 불에서 8~10분 찐다.","다 익으면 저염간장 1작은술+참기름 몇 방울만 살짝 두른다.","대파를 올리고 현미밥과 낸다."],
+  tip:"조림(간장 다량) 대신 <b>찜</b>이 저염에 유리. 생강이 비린내를 잡아 간장을 적게 써도 된다. 소화도 편함."},
+
+ {id:"kongguksu", name:"콩국수", en:"Cold Soy Milk Noodles", time:"약 20분", level:"보통", note:"식물성 단백·여름",
+  tag:{protein:["두유","두부"],grain:["통밀 파스타","메밀면"],veg:["오이","토마토"],season:[]},
+  items:["삶은 흰콩 1컵(또는 무가당 두유 2컵)","통밀/메밀 국수 2인분","오이채, 토마토","소금 2꼬집(또는 생략), 깨"],
+  steps:["삶은 콩을 물과 함께 곱게 갈아 콩물을 만들어 차게 둔다.","국수를 삶아 찬물에 헹군다.","그릇에 국수를 담고 콩물을 붓는다.","오이채·토마토를 올리고 소금은 아주 소량만(콩 고소함으로 충분), 깨를 뿌린다."],
+  tip:"콩물 자체가 고소해 <b>소금 없이도</b> 맛있다. 통밀·메밀면으로 통곡물↑, 여름 단백질 보충에 좋다."},
+
+ {id:"aehobak-shrimp", name:"애호박 새우볶음", en:"Zucchini & Shrimp", time:"약 15분", level:"아주 쉬움", note:"저염 반찬",
+  tag:{protein:["새우"],grain:["현미","잡곡"],veg:["애호박","당근"],season:["마늘","올리브유","후추"]},
+  items:["애호박 1개, 새우 8마리","다진 마늘, 올리브유 1큰술","후추, 소금 2꼬집(새우젓 대신 생략 가능)","현미밥"],
+  steps:["애호박을 반달로 썬다.","팬에 올리브유·마늘을 볶아 향을 낸다.","새우와 애호박을 넣어 중불로 3~4분 볶는다.","후추로 마무리, 소금은 최소(새우 감칠맛 활용). 현미밥과 낸다."],
+  tip:"새우젓 대신 <b>새우 자체의 감칠맛</b>으로. 소금은 2꼬집 이하로 충분."},
+
+ {id:"dak-juk", name:"닭 채소죽", en:"Chicken Veg Porridge", time:"약 40분", level:"보통", note:"부드러움·항암 중 적합·회복식",
+  tag:{protein:["닭가슴살","달걀"],grain:["현미","잡곡"],veg:["당근","버섯","애호박"],season:["마늘","참기름·들기름"]},
+  items:["닭가슴살 1쪽, 불린 쌀 1컵","당근·버섯·애호박 잘게","참기름 1작은술, 다진 마늘","물 6컵, 소금은 먹을 때 아주 소량"],
+  steps:["닭가슴살을 삶아 잘게 찢고, 삶은 물을 육수로 쓴다.","참기름에 불린 쌀·마늘을 살짝 볶는다.","육수를 붓고 잘게 썬 채소를 넣어 중약불 25~30분 저으며 끓인다.","닭살을 넣어 농도를 맞춘다. 간은 먹을 때 소금 아주 소량만."],
+  tip:"입맛 없거나 소화가 힘든 <b>항암 시기에 적합</b>. 간은 미리 넣지 말고 먹을 때 최소로."},
+
+ {id:"egg-juk", name:"계란 채소죽", en:"Egg & Veg Porridge", time:"약 30분", level:"쉬움", note:"부드러움·소화 편함·회복식",
+  tag:{protein:["달걀","두부"],grain:["현미","잡곡"],veg:["당근","애호박","버섯","시금치"],season:["참기름·들기름","마늘"]},
+  items:["불린 쌀 1컵, 달걀 2개","당근·애호박·시금치 잘게","참기름 1작은술","다시마 육수 6컵, 소금 아주 소량"],
+  steps:["참기름에 불린 쌀을 살짝 볶는다.","다시마 육수를 붓고 잘게 썬 채소를 넣어 25분 끓인다(자주 저어 눌지 않게).","풀어둔 달걀을 돌려 넣고 저어 부드럽게 익힌다(완숙).","간은 먹을 때 소금 아주 소량만. 김가루는 소량."],
+  tip:"부드러워 <b>구내염·메스꺼움 있는 항암 시기</b>에 먹기 편하다. 항암 중 달걀은 완전히 익히고 간은 최소로."},
+
+ {id:"chickpea-curry", name:"병아리콩 채소 카레", en:"Chickpea Veg Curry", time:"약 30분", level:"보통", note:"식물성 단백·강황·저염",
+  tag:{protein:["병아리콩","닭가슴살"],grain:["현미","잡곡"],veg:["당근","파프리카","애호박","토마토"],season:["마늘","생강","카레·강황","올리브유"]},
+  items:["삶은 병아리콩 1.5컵","양파·당근·파프리카·애호박","다진 마늘·생강, 카레가루(강황) 1큰술","올리브유 1큰술, 물/무염 채수 2컵, 현미밥"],
+  steps:["올리브유에 마늘·생강·양파를 볶아 향을 낸다.","채소를 넣어 3~4분 볶는다.","카레가루를 넣어 30초 볶은 뒤 물(채수)을 붓는다.","병아리콩을 넣고 중약불 15분 끓여 걸쭉하게(소금 최소, 강황 향으로 간을 살림). 현미밥과 낸다."],
+  tip:"시판 고형카레는 나트륨·지방↑. <b>카레가루(강황)</b>로 직접 만들면 저염. 강황 향이 소금을 대신한다."},
+
+ {id:"tuna-bowl", name:"물참치 채소 덮밥", en:"Tuna Veggie Bowl", time:"약 15분", level:"아주 쉬움", note:"간편·단백질·저염",
+  tag:{protein:["참치(물참치)","달걀"],grain:["현미","잡곡"],veg:["양배추","당근","오이","시금치"],season:["저염간장","참기름·들기름","식초"]},
+  items:["물참치 1캔(체에 밭쳐 물기 제거 후 헹굼)","현미밥 2공기","양배추·당근·오이·상추 채썰기","저염간장 1작은술+식초+참기름(양념)","(선택) 완숙 달걀후라이"],
+  steps:["물참치는 체에 밭쳐 국물을 버리고 가볍게 헹궈 염분을 줄인다.","그릇에 현미밥을 담고 채소를 올린다.","참치와 (선택)완숙 달걀을 올린다.","저염간장 1작은술+식초+참기름으로 비벼 먹는다."],
+  tip:"참치 캔은 <b>물에 헹궈</b> 나트륨↓, 마요네즈 대신 <b>식초·참기름</b>으로. 바쁠 때 간편 단백질."},
+
+ {id:"oatmeal", name:"오트밀 바나나죽", en:"Banana Oatmeal Porridge", time:"약 10분", level:"아주 쉬움", note:"아침·부드러움·항암 중 적합",
+  tag:{protein:["두유","그릭요거트"],grain:["귀리"],veg:[],season:[]},
+  items:["납작귀리 1/2컵","무가당 두유 또는 물 1.5컵","바나나 1개, 견과·베리 약간","(선택) 그릭요거트 한 술"],
+  steps:["냄비에 귀리와 두유를 넣고 약불로 5~7분 저으며 끓인다.","으깬 바나나를 넣어 단맛을 낸다(설탕 없이).","걸쭉해지면 그릇에 담고 견과·베리를 올린다.","따뜻하게 데워 먹는다."],
+  tip:"설탕 대신 <b>바나나</b>의 단맛으로. 부드러워 아침·<b>항암 중 입맛 없을 때</b> 편하다."}
+];
+
+/* ---------- build ingredient rows ---------- */
+const sel={protein:new Set(),grain:new Set(),veg:new Set(),season:new Set()};
+const rowsEl=document.getElementById('rows');
+Object.keys(DATA).forEach(key=>{
+  const d=DATA[key];
+  const row=document.createElement('div'); row.className='row '+d.cls;
+  row.innerHTML=`<div class="head"><span class="dot"></span><span class="name">${d.name}</span><span class="hint">${d.hint}</span></div>`;
+  const chips=document.createElement('div'); chips.className='chips';
+  d.items.forEach(it=>{
+    const b=document.createElement('button'); b.className='chip'; b.textContent=it;
+    b.onclick=()=>{ b.classList.toggle('on'); sel[key].has(it)?sel[key].delete(it):sel[key].add(it); };
+    chips.appendChild(b);
+  });
+  row.appendChild(chips); rowsEl.appendChild(row);
+});
+
+/* ---------- recipe rendering ---------- */
+function recipeHTML(d){
+  const items=d.items.map(i=>`<li>${i}</li>`).join("");
+  const steps=d.steps.map(s=>`<li>${s}</li>`).join("");
+  return `<div class="recipe">
+    <div class="rhead">
+      <div class="rname">${d.name}</div>
+      <div class="ren">${d.en||""}</div>
+      <div class="meta"><span>🍽 2인분</span><span>⏱ ${d.time}</span><span>난이도 ${d.level}</span><span>${d.note}</span></div>
+    </div>
+    <div class="rbody">
+      <div class="rsec"><h4>재료</h4><ul>${items}</ul></div>
+      <div class="rsec"><h4>조리 순서</h4><ol>${steps}</ol></div>
+      <div class="rtip">💡 <b>저염·건강 포인트</b> — ${d.tip}</div>
+      <div class="rsec" style="margin-top:16px"><h4>단위 참고 (g·ml)</h4><p style="font-size:12.5px;color:var(--mute);line-height:1.75">1큰술≈15ml · 1작은술≈5ml · 1컵≈200ml · 밥 1공기≈210g · 두부 1모≈300g · 순두부 1봉≈350g · 물참치 1캔≈100g · 채소 1줌≈50~70g · 생선 1토막≈100g · 마늘 1쪽≈5g · 새우 1마리≈15g · 소금 1작은술≈5g(나트륨≈2000mg) · 1꼬집≈0.3g</p></div>
+    </div>
+  </div>`;
+}
+
+/* ---------- MODE A: ingredients -> menu ---------- */
+function score(d){
+  let s=0;
+  d.tag.protein.forEach(x=>{ if(sel.protein.has(x)) s+=3; });
+  d.tag.veg.forEach(x=>{ if(sel.veg.has(x)) s+=1.5; });
+  d.tag.grain.forEach(x=>{ if(sel.grain.has(x)) s+=1; });
+  d.tag.season.forEach(x=>{ if(sel.season.has(x)) s+=0.6; });
+  return s;
+}
+function buildCustom(){
+  const P=[...sel.protein],G=[...sel.grain],V=[...sel.veg],S=[...sel.season];
+  const p=P[0]||"";
+  let name, steps, time="약 20분";
+  const veg = V.length?V.join("·"):"채소";
+  const grain = G.length?G[0]:"통곡물밥";
+  const season = S.length?S.join("·"):"마늘·올리브유";
+  if(p.includes("두부")){name=`${veg} 두부구이`; steps=["두부는 1.5cm로 썰어 물기를 5분 빼고, 팬에 올리브유를 둘러 앞뒤로 노릇하게 굽는다.",`${veg}를 넣어 센 불로 2~3분 볶는다.`,`${season}로 향만 입히고 소금은 최소화한다.`,`${grain}과 함께 낸다.`];}
+  else if(p.includes("닭")){name=`${veg} 닭가슴살볶음`; steps=["닭가슴살을 한입 크기로 썰어 후추로 밑간한다.","팬을 강불로 달궈 올리브유에 닭을 4~5분 볶는다.",`${veg}를 넣어 아삭하게 볶는다.`,`${season}로 마무리(저염간장은 1작은술 이하).`,`${grain}과 낸다.`];}
+  else if(p.includes("생선")||p.includes("연어")||p.includes("고등어")){name=`${p.replace(/\(.*\)/,'')} ${veg}구이`; steps=["생선은 물기를 닦고 후추만 뿌린다.","팬/에어프라이어에 껍질 쪽부터 노릇하게 굽는다.",`${veg}를 곁들여 익힌다.`,"레몬즙을 뿌려 소금 대신 산미로 간을 살린다.",`${grain}과 낸다.`];}
+  else if(p.includes("새우")){name=`새우 ${veg} 볶음`; steps=["팬에 올리브유·편 마늘을 약불로 볶아 향을 낸다.",`새우와 ${veg}를 넣어 3~4분 익힌다.`,"고춧가루·후추로 향을 내고 소금은 생략한다.",`${grain} 또는 통곡물빵과 낸다.`];}
+  else if(p.includes("콩")||p.includes("렌틸")||p.includes("병아리")){name=`${p} ${veg} 스튜`; steps=["냄비에 올리브유·마늘·양파를 볶아 향을 낸다.",`토마토와 ${veg}를 넣어 끓인다.`,`${p}과 물(무염 채수)을 넣고 20분 뭉근히 끓인다.`,"허브·후추로 향을 내고 소금은 최소화(토마토 감칠맛 활용).",`${grain} 또는 통곡물빵과 낸다.`];}
+  else if(p.includes("달걀")){name=`${veg} 달걀볶음`; steps=[`${veg}를 올리브유에 볶는다.`,"달걀을 넣어 완전히 익힌다(항암 중 반숙 금지).",`${season}로 향만 입힌다.`,`${grain}과 낸다.`];}
+  else {name=`${veg} ${grain} 한 그릇`; steps=[`${veg}를 올리브유에 살짝 볶거나 데친다.`,`${grain}와 함께 담는다.`,`${season}로 가볍게 간한다(소금 최소).`];}
+  return {name, en:"맞춤 조합 레시피", time, level:"쉬움", note:"선택 재료 기반",
+    items:[P.length?`단백질: ${P.join(", ")}`:"단백질: (미선택)", G.length?`곡물: ${G.join(", ")}`:"곡물: 통곡물밥", V.length?`채소: ${V.join(", ")}`:"채소: 제철 채소", S.length?`양념: ${S.join(", ")}`:"양념: 올리브유·마늘·후추"],
+    steps, tip:"간은 마지막에 조금씩, 국물은 ‘살짝 싱겁게(≤0.5%)’. 짠맛은 <b>레몬·식초·마늘·후추·허브</b>로 보완."};
+}
+function findMenu(){
+  const altA=document.getElementById('altA'), recA=document.getElementById('recipeA');
+  const total=sel.protein.size+sel.grain.size+sel.veg.size+sel.season.size;
+  if(total===0){ altA.innerHTML=""; recA.innerHTML=`<div class="rtip" style="margin-top:14px">위에서 재료를 골라 <b style="color:var(--pine)">메뉴 찾기</b>를 눌러주세요.</div>`; return; }
+  const ranked=DISHES.map(d=>({d,s:score(d)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+  if(ranked.length && ranked[0].s>=3){
+    recA.innerHTML=recipeHTML(ranked[0].d);
+    const alts=ranked.slice(1,4);
+    altA.innerHTML = alts.length? `<div class="altwrap"><div class="altlab">이 재료로 어울리는 다른 메뉴</div><div class="altbtns">${alts.map(x=>`<button class="altbtn" data-id="${x.d.id}">${x.d.name}</button>`).join("")}</div></div>`:"";
+    altA.querySelectorAll('.altbtn').forEach(b=>b.onclick=()=>{ recA.innerHTML=recipeHTML(DISHES.find(d=>d.id===b.dataset.id)); window.scrollTo({top:recA.offsetTop-20,behavior:'smooth'}); });
+  } else {
+    altA.innerHTML=`<div class="altwrap"><div class="altlab">딱 맞는 정식 메뉴가 없어 선택 재료로 맞춤 레시피를 구성했어요</div></div>`;
+    recA.innerHTML=recipeHTML(buildCustom());
+  }
+}
+document.getElementById('gen').onclick=findMenu;
+document.getElementById('reset').onclick=()=>{
+  Object.keys(sel).forEach(k=>sel[k].clear());
+  document.querySelectorAll('#rows .chip').forEach(c=>c.classList.remove('on'));
+  document.getElementById('altA').innerHTML=""; document.getElementById('recipeA').innerHTML="";
+};
+document.getElementById('rand').onclick=()=>{
+  Object.keys(DATA).forEach(key=>{ sel[key].clear();
+    const it=DATA[key].items.slice(); const n=(key==='grain')?1:(1+Math.round(Math.random()));
+    for(let i=0;i<n&&it.length;i++) sel[key].add(it.splice(Math.floor(Math.random()*it.length),1)[0]);
+  });
+  document.querySelectorAll('#rows .chip').forEach(c=>{
+    const key=Object.keys(DATA).find(k=>DATA[k].items.includes(c.textContent));
+    c.classList.toggle('on', sel[key].has(c.textContent));
+  });
+  findMenu();
+};
+
+/* ---------- MODE B: menu -> recipe (with filters) ---------- */
+const META={
+  salmon:{broth:"없음",form:"밥",temp:"따뜻"},"tofu-steak":{broth:"없음",form:"밥",temp:"따뜻"},
+  "chicken-stirfry":{broth:"없음",form:"밥",temp:"따뜻"},"lentil-stew":{broth:"있음",form:"국·탕",temp:"따뜻"},
+  "cod-soup":{broth:"있음",form:"국·탕",temp:"따뜻"},bibimbap:{broth:"없음",form:"밥",temp:"따뜻"},
+  mackerel:{broth:"없음",form:"밥",temp:"따뜻"},gambas:{broth:"없음",form:"밥",temp:"따뜻"},
+  "yogurt-bowl":{broth:"없음",form:"샐러드",temp:"차가움"},"miso-soup":{broth:"있음",form:"국·탕",temp:"따뜻"},
+  "quinoa-salad":{broth:"없음",form:"샐러드",temp:"차가움"},aglio:{broth:"없음",form:"면",temp:"따뜻"},
+  gondre:{broth:"없음",form:"밥",temp:"따뜻"},"tofu-jorim":{broth:"없음",form:"반찬",temp:"따뜻"},
+  kongnamul:{broth:"있음",form:"국·탕",temp:"따뜻"},miyeok:{broth:"있음",form:"국·탕",temp:"따뜻"},
+  bugeo:{broth:"있음",form:"국·탕",temp:"따뜻"},japchae:{broth:"없음",form:"반찬",temp:"따뜻"},
+  namul:{broth:"없음",form:"반찬",temp:"차가움"},sundubu:{broth:"있음",form:"국·탕",temp:"따뜻"},
+  samgyetang:{broth:"있음",form:"국·탕",temp:"따뜻"},jeongol:{broth:"있음",form:"국·탕",temp:"따뜻"},
+  "fish-jjim":{broth:"없음",form:"밥",temp:"따뜻"},kongguksu:{broth:"있음",form:"면",temp:"차가움"},
+  "aehobak-shrimp":{broth:"없음",form:"반찬",temp:"따뜻"},"dak-juk":{broth:"없음",form:"죽",temp:"따뜻"},
+  "egg-juk":{broth:"없음",form:"죽",temp:"따뜻"},"chickpea-curry":{broth:"있음",form:"밥",temp:"따뜻"},
+  "tuna-bowl":{broth:"없음",form:"밥",temp:"따뜻"},oatmeal:{broth:"없음",form:"죽",temp:"따뜻"}
+};
+const FILTERS={ broth:{label:"국물",opts:["있음","없음"]}, form:{label:"형태",opts:["밥","면","샐러드","국·탕","죽","반찬"]}, temp:{label:"온도",opts:["따뜻","차가움"]} };
+const fstate={broth:null,form:null,temp:null};
+const filtersEl=document.getElementById('filters');
+Object.keys(FILTERS).forEach(key=>{
+  const g=document.createElement('div'); g.className='fgroup';
+  g.innerHTML=`<span class="fglabel">${FILTERS[key].label}</span>`;
+  const all=document.createElement('button'); all.className='fbtn on'; all.textContent='전체';
+  all.onclick=()=>setFilter(key,null,g); g.appendChild(all);
+  FILTERS[key].opts.forEach(o=>{ const b=document.createElement('button'); b.className='fbtn'; b.textContent=o; b.onclick=()=>setFilter(key,o,g); g.appendChild(b); });
+  filtersEl.appendChild(g);
+});
+function setFilter(key,val,groupEl){
+  fstate[key]=(fstate[key]===val)?null:val;
+  [...groupEl.querySelectorAll('.fbtn')].forEach(btn=>{
+    const t=btn.textContent; const active=(t==='전체'&&fstate[key]===null)||(t===fstate[key]);
+    btn.classList.toggle('on',active);
+  });
+  renderGrid();
+}
+const grid=document.getElementById('menugrid');
+let cntEl=document.createElement('div'); cntEl.className='fcount'; grid.parentNode.insertBefore(cntEl,grid);
+function renderGrid(){
+  grid.innerHTML="";
+  const list=DISHES.filter(d=>{ const m=META[d.id]||{};
+    return (fstate.broth===null||m.broth===fstate.broth)&&(fstate.form===null||m.form===fstate.form)&&(fstate.temp===null||m.temp===fstate.temp);
+  });
+  cntEl.textContent=`${list.length}개 메뉴`;
+  if(list.length===0){ grid.innerHTML='<div class="fcount" style="margin:0">조건에 맞는 메뉴가 없어요. 필터를 줄여보세요.</div>'; return; }
+  list.forEach(d=>{ const m=META[d.id]||{};
+    const b=document.createElement('button'); b.className='mbtn';
+    b.innerHTML=`<div class="mn">${d.name}</div><div class="mt">${d.en} · ${d.time}</div><div class="mtags">${m.form||''} · ${m.temp||''} · 국물 ${m.broth||''}</div>`;
+    b.onclick=()=>{ document.getElementById('recipeB').innerHTML=recipeHTML(d); window.scrollTo({top:document.getElementById('recipeB').offsetTop-20,behavior:'smooth'}); };
+    grid.appendChild(b);
+  });
+}
+renderGrid();
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on'); document.getElementById('panel'+t.dataset.tab).classList.add('on');
+});
+</script>
+</body>
+</html>
