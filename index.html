@@ -121,6 +121,21 @@ Copyright 2026. 나어진 All rights reserved.
   .stepper button{width:26px; height:26px; border-radius:7px; border:1.5px solid var(--pine); background:#fff; color:var(--pine); font-weight:700; cursor:pointer; font-size:14px; line-height:1}
   .stepper button:hover{background:var(--pine); color:#fff}
   .stepper .cnt{font-family:var(--data); font-weight:600; min-width:16px; text-align:center; font-size:13px}
+  .modebtns{display:flex; gap:8px; margin-bottom:14px}
+  .modebtn{font-size:13px; font-weight:700; padding:8px 16px; border-radius:999px; border:1.5px solid var(--line); background:#F2F6F5; color:var(--ink); cursor:pointer; transition:.12s}
+  .modebtn.on{background:var(--pine); color:#fff; border-color:var(--pine)}
+  #manView{flex-wrap:wrap; gap:12px}
+  #manView label{font-size:12px; font-weight:700; color:var(--pine); display:flex; flex-direction:column; gap:5px}
+  #manView input{font-family:var(--data); font-size:14px; padding:8px 10px; border:1.5px solid var(--line); border-radius:9px; width:92px}
+  .selhint{font-size:13px; color:var(--mute); background:#F7FAFA; border:1px dashed var(--line); border-radius:10px; padding:14px; text-align:center}
+  .msresults{display:none; grid-template-columns:repeat(auto-fill,minmax(205px,1fr)); gap:6px; margin-top:10px}
+  .resitem{text-align:left; background:#fff; border:1.5px solid var(--line); border-radius:9px; padding:8px 11px; cursor:pointer; display:flex; flex-direction:column; gap:2px; font-family:var(--ui)}
+  .resitem:hover{border-color:var(--pine2)}
+  .resitem.added{background:#EAF3EF; border-color:#5FBE93}
+  .resitem .rn{font-weight:700; font-size:13px; color:var(--ink)}
+  .resitem .rd{font-family:var(--data); font-size:9.5px; color:var(--pine2)}
+  .resitem .rd b{color:#2E7D5B}
+  .nores{font-size:13px; color:var(--mute); padding:10px}
   .sumcard{margin-top:16px; background:linear-gradient(155deg,#123B3F,#1B565A); color:#EAF2F0; border-radius:16px; padding:22px 24px; box-shadow:var(--shadow)}
   .sumcard h3{color:#fff; font-size:18px; margin-bottom:4px}
   .sumtot{font-family:var(--data); font-size:13px; color:#CFE1DE; margin-bottom:16px}
@@ -254,16 +269,28 @@ Copyright 2026. 나어진 All rights reserved.
   <div class="panel" id="panelT">
     <div class="gcard">
       <h3 style="margin-top:0">하루 목표 설정</h3>
+      <div class="modebtns">
+        <button class="modebtn on" data-mode="default">디폴트 (자동)</button>
+        <button class="modebtn" data-mode="manual">직접 설정</button>
+      </div>
       <div class="tinputs">
         <label>체중 (kg)<input id="wKg" type="number" value="60" min="30" max="120"></label>
-        <div class="tcalc">하루 열량 목표<br><b id="kcalShow">1800</b> kcal <span class="tsmall">(체중 × 약 30kcal 자동)</span></div>
+        <div class="tcalc" id="defView">하루 열량 목표<br><b id="kcalShow">1800</b> kcal <span class="tsmall">(체중 × 약 30kcal 자동)</span></div>
+        <div id="manView" style="display:none">
+          <label>열량 (kcal)<input id="kcalIn" type="number" value="1800" min="800" step="10"></label>
+          <label>탄수 (g)<input id="cIn" type="number" value="225" min="0"></label>
+          <label>단백 (g)<input id="pIn" type="number" value="72" min="0"></label>
+          <label>지방 (g)<input id="fIn" type="number" value="60" min="0"></label>
+        </div>
       </div>
       <p class="tnote" id="targetLine"></p>
     </div>
     <div class="gcard">
-      <h3 style="margin-top:0">오늘의 메뉴 담기 <span style="font-weight:400;font-size:13px;color:var(--mute)">— ＋로 여러 개·같은 메뉴 반복 가능</span></h3>
-      <input id="msearch" class="msearch" type="text" placeholder="메뉴 이름 검색 (예: 두부, 죽, 연어)">
+      <h3 style="margin-top:0">오늘의 메뉴 담기</h3>
+      <div class="selhint" id="selhint">아직 담은 메뉴가 없어요. 아래 검색창에서 메뉴를 눌러 담아요.</div>
       <div class="tsel" id="tsel"></div>
+      <input id="msearch" class="msearch" type="text" placeholder="메뉴 이름 검색해서 담기 (예: 두부, 죽, 연어)" style="margin-top:14px">
+      <div class="msresults" id="msresults"></div>
     </div>
     <div class="sumcard" id="sumcard"></div>
   </div>
@@ -630,20 +657,46 @@ renderGrid();
 
 /* ---------- MODE T: daily nutrition tracker ---------- */
 const counts={};
+let tmode='default';
 const tselEl=document.getElementById('tsel');
-DISHES.forEach(d=>{
-  const m=MACRO[d.id]||{}, meta=META[d.id]||{};
-  const row=document.createElement('div'); row.className='titem';
-  row.dataset.name=(d.name+' '+(d.en||'')).toLowerCase();
-  row.innerHTML=`<div><div class="tn">${d.name}</div><div class="td">${meta.form||''} · 단 ${m.p||0}g · ${m.kcal||0}kcal</div></div>`+
-    `<div class="stepper"><button data-op="m">−</button><span class="cnt">0</span><button data-op="p">＋</button></div>`;
-  const cnt=row.querySelector('.cnt');
-  row.querySelector('[data-op="p"]').onclick=()=>{counts[d.id]=(counts[d.id]||0)+1;cnt.textContent=counts[d.id];row.classList.add('sel');updateSum();};
-  row.querySelector('[data-op="m"]').onclick=()=>{counts[d.id]=Math.max(0,(counts[d.id]||0)-1);cnt.textContent=counts[d.id];row.classList.toggle('sel',counts[d.id]>0);updateSum();};
-  tselEl.appendChild(row);
-});
+const searchEl=document.getElementById('msearch');
+const resEl=document.getElementById('msresults');
+function renderSelected(){
+  tselEl.innerHTML='';
+  const ids=Object.keys(counts).filter(id=>counts[id]>0);
+  document.getElementById('selhint').style.display=ids.length?'none':'block';
+  ids.forEach(id=>{
+    const d=DISHES.find(x=>x.id===id); const m=MACRO[id]||{}, meta=META[id]||{};
+    const row=document.createElement('div'); row.className='titem sel';
+    row.innerHTML=`<div><div class="tn">${d.name}</div><div class="td">${meta.form||''} · 단 ${m.p||0}g · ${m.kcal||0}kcal</div></div>`+
+      `<div class="stepper"><button data-op="m">−</button><span class="cnt">${counts[id]}</span><button data-op="p">＋</button></div>`;
+    row.querySelector('[data-op="p"]').onclick=()=>{counts[id]++;refresh();};
+    row.querySelector('[data-op="m"]').onclick=()=>{counts[id]--;if(counts[id]<=0)delete counts[id];refresh();};
+    tselEl.appendChild(row);
+  });
+}
+function renderResults(q){
+  resEl.innerHTML='';
+  const list=DISHES.filter(d=>!q||(d.name+' '+(d.en||'')).toLowerCase().includes(q));
+  if(!list.length){resEl.innerHTML='<div class="nores">검색 결과가 없어요.</div>';return;}
+  list.forEach(d=>{ const m=MACRO[d.id]||{}, meta=META[d.id]||{}, n=counts[d.id]||0;
+    const it=document.createElement('button'); it.className='resitem'+(n>0?' added':'');
+    it.innerHTML=`<span class="rn">${d.name}</span><span class="rd">${meta.form||''}·단${m.p||0}g·${m.kcal||0}kcal${n>0?` · <b>담김 ${n}</b>`:''}</span>`;
+    it.onmousedown=(e)=>{e.preventDefault();counts[d.id]=(counts[d.id]||0)+1;refresh();};
+    resEl.appendChild(it);
+  });
+}
+function refresh(){ renderSelected(); if(resEl.style.display!=='none') renderResults(searchEl.value.trim().toLowerCase()); updateSum(); }
+searchEl.onfocus=()=>{resEl.style.display='grid';renderResults(searchEl.value.trim().toLowerCase());};
+searchEl.oninput=()=>{resEl.style.display='grid';renderResults(searchEl.value.trim().toLowerCase());};
+searchEl.onblur=()=>setTimeout(()=>{resEl.style.display='none';},160);
 function targets(){
   const w=+document.getElementById('wKg').value||60;
+  if(tmode==='manual'){
+    const kcal=+document.getElementById('kcalIn').value||0;
+    const p=+document.getElementById('pIn').value||0;
+    return {kcal, p, pLo:Math.round(p*0.9), pHi:Math.round(p*1.2), c:+document.getElementById('cIn').value||0, f:+document.getElementById('fIn').value||0};
+  }
   const kcal=Math.round(w*30);
   return {kcal, p:Math.round(w*1.2), pLo:Math.round(w*1.0), pHi:Math.round(w*1.5), c:Math.round(kcal*0.5/4), f:Math.round(kcal*0.3/9)};
 }
@@ -670,7 +723,22 @@ function updateSum(){
     `<p style="font-family:var(--data);font-size:11.5px;color:#B7D0CC;margin-top:8px">목표는 조정 가능한 추정치입니다. 단백질은 치료 중 넉넉히(체중×1.0~1.5g). 정확한 목표는 임상영양사와 상의하세요.</p>`;
 }
 document.getElementById('wKg').oninput=updateSum;
-document.getElementById('msearch').oninput=(e)=>{const q=e.target.value.trim().toLowerCase();[...tselEl.children].forEach(row=>{row.style.display=(!q||(row.dataset.name||'').includes(q))?'':'none';});};
+['kcalIn','cIn','pIn','fIn'].forEach(id=>{const el=document.getElementById(id); if(el) el.oninput=updateSum;});
+document.querySelectorAll('.modebtn').forEach(b=>b.onclick=()=>{
+  tmode=b.dataset.mode;
+  document.querySelectorAll('.modebtn').forEach(x=>x.classList.toggle('on',x===b));
+  const def=document.getElementById('defView'), man=document.getElementById('manView');
+  if(tmode==='manual'){
+    const w=+document.getElementById('wKg').value||60, k=Math.round(w*30);
+    document.getElementById('kcalIn').value=k;
+    document.getElementById('cIn').value=Math.round(k*0.5/4);
+    document.getElementById('pIn').value=Math.round(w*1.2);
+    document.getElementById('fIn').value=Math.round(k*0.3/9);
+    def.style.display='none'; man.style.display='flex';
+  } else { def.style.display=''; man.style.display='none'; }
+  updateSum();
+});
+renderSelected();
 updateSum();
 
 /* ---------- tabs ---------- */
