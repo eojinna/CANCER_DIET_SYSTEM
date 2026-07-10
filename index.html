@@ -1,4 +1,5 @@
-Copyright 2026. [나어진 All rights reserved.
+Copyright 2026. 나어진 All rights reserved.
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -95,6 +96,40 @@ Copyright 2026. [나어진 All rights reserved.
     background:var(--pine); color:#fff; border-radius:8px; display:grid; place-items:center; font-family:var(--data); font-size:13px; font-weight:600}
   .rtip{background:#EAF3EF; border-radius:10px; padding:13px 15px; font-size:13.5px; color:var(--pine); line-height:1.6}
   .rtip b{color:var(--danger)}
+  .macro{display:flex; flex-wrap:wrap; gap:8px}
+  .macro span{font-family:var(--data); font-size:13px; font-weight:600; border-radius:999px; padding:6px 12px; border:1px solid var(--line)}
+  .macro .mc{background:#FBEEE4; color:#B0532E; border-color:#F0D9C9}
+  .macro .mp{background:#E7F1EC; color:#2E7D5B; border-color:#CFE4DA}
+  .macro .mf{background:#FBF3E0; color:#9C7128; border-color:#EFE2C4}
+  .macro .mk{background:#EEF2F3; color:var(--pine); border-color:#D8E1E1}
+  /* tracker */
+  .tinputs{display:flex; flex-wrap:wrap; gap:16px}
+  .tinputs label{font-size:13px; font-weight:700; color:var(--pine); display:flex; flex-direction:column; gap:6px}
+  .tinputs input{font-family:var(--data); font-size:15px; padding:9px 11px; border:1.5px solid var(--line); border-radius:10px; width:150px}
+  .tnote{font-family:var(--data); font-size:12.5px; color:var(--mute); margin-top:12px; line-height:1.6}
+  .tcalc{font-size:13px; font-weight:700; color:var(--pine); align-self:flex-end; line-height:1.55}
+  .tcalc b{font-family:var(--data); font-size:18px}
+  .tcalc .tsmall{font-family:var(--data); font-size:11px; color:var(--mute); font-weight:400}
+  .msearch{width:100%; font-family:var(--ui); font-size:14px; padding:10px 13px; border:1.5px solid var(--line); border-radius:10px; margin-bottom:12px}
+  .msearch:focus{outline:none; border-color:var(--pine2)}
+  .tsel{display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:7px}
+  .titem{display:grid; grid-template-columns:1fr auto; align-items:center; gap:8px; background:#F7FAFA; border:1px solid var(--line); border-radius:9px; padding:7px 10px}
+  .titem.sel{background:#EAF3EF; border-color:#BBD7CE}
+  .titem .tn{font-weight:700; font-size:13px; line-height:1.2}
+  .titem .td{font-family:var(--data); font-size:9.5px; color:var(--pine2); margin-top:2px}
+  .stepper{display:flex; align-items:center; gap:5px}
+  .stepper button{width:26px; height:26px; border-radius:7px; border:1.5px solid var(--pine); background:#fff; color:var(--pine); font-weight:700; cursor:pointer; font-size:14px; line-height:1}
+  .stepper button:hover{background:var(--pine); color:#fff}
+  .stepper .cnt{font-family:var(--data); font-weight:600; min-width:16px; text-align:center; font-size:13px}
+  .sumcard{margin-top:16px; background:linear-gradient(155deg,#123B3F,#1B565A); color:#EAF2F0; border-radius:16px; padding:22px 24px; box-shadow:var(--shadow)}
+  .sumcard h3{color:#fff; font-size:18px; margin-bottom:4px}
+  .sumtot{font-family:var(--data); font-size:13px; color:#CFE1DE; margin-bottom:16px}
+  .pbar{margin-bottom:13px}
+  .pbar .plab{display:flex; justify-content:space-between; align-items:center; font-size:13.5px; margin-bottom:5px}
+  .pbar .plab .pv{font-family:var(--data); font-size:12px; color:#CFE1DE}
+  .pstatus{font-family:var(--data); font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:999px; margin-left:6px; color:#0E2E31}
+  .pbar .ptrack{height:14px; background:rgba(255,255,255,.15); border-radius:7px; overflow:hidden}
+  .pbar .pfill{height:100%; border-radius:7px; transition:width .3s}
 
   .foot{margin-top:24px; font-size:12.5px; color:var(--mute); border-left:3px solid var(--line); padding-left:14px; line-height:1.6}
   /* filters */
@@ -145,6 +180,7 @@ Copyright 2026. [나어진 All rights reserved.
     <button class="tab on" data-tab="G">① 안내 &amp; FAQ</button>
     <button class="tab" data-tab="B">② 메뉴로 레시피 찾기</button>
     <button class="tab" data-tab="A">③ 재료로 메뉴 찾기</button>
+    <button class="tab" data-tab="T">④ 하루 영양 달성률</button>
   </div>
 
   <!-- PANEL G: 안내 & FAQ -->
@@ -212,6 +248,24 @@ Copyright 2026. [나어진 All rights reserved.
     <div class="filters" id="filters"></div>
     <div class="menugrid" id="menugrid"></div>
     <div id="recipeB"></div>
+  </div>
+
+  <!-- PANEL T: daily nutrition tracker -->
+  <div class="panel" id="panelT">
+    <div class="gcard">
+      <h3 style="margin-top:0">하루 목표 설정</h3>
+      <div class="tinputs">
+        <label>체중 (kg)<input id="wKg" type="number" value="60" min="30" max="120"></label>
+        <div class="tcalc">하루 열량 목표<br><b id="kcalShow">1800</b> kcal <span class="tsmall">(체중 × 약 30kcal 자동)</span></div>
+      </div>
+      <p class="tnote" id="targetLine"></p>
+    </div>
+    <div class="gcard">
+      <h3 style="margin-top:0">오늘의 메뉴 담기 <span style="font-weight:400;font-size:13px;color:var(--mute)">— ＋로 여러 개·같은 메뉴 반복 가능</span></h3>
+      <input id="msearch" class="msearch" type="text" placeholder="메뉴 이름 검색 (예: 두부, 죽, 연어)">
+      <div class="tsel" id="tsel"></div>
+    </div>
+    <div class="sumcard" id="sumcard"></div>
   </div>
 
   <p class="foot"><b>모든 메뉴는 저염·식물성 위주·저지방 조리로 암 치료기에 맞게 선별/조정</b>했습니다. 고나트륨·가공육·튀김류(김치찌개·부대찌개·젓갈·삼겹살 등)는 제외했고, 죽·순한 국 등 일부는 항암 중 입맛 없거나 소화가 힘들 때를 위한 것입니다. 일반 가이드용이며 의료·영양 처방을 대신하지 않습니다. 분량은 성인 2인분 기준입니다. 항암으로 백혈구가 낮은 시기에는 회·생굴·반숙란·씻지 않은 생채소를 피하고 충분히 익혀 드세요. 개인 목표 염도·단백질량은 담당 의료진·임상영양사와 정하시기 바랍니다.</p>
@@ -429,6 +483,8 @@ Object.keys(DATA).forEach(key=>{
 function recipeHTML(d){
   const items=d.items.map(i=>`<li>${i}</li>`).join("");
   const steps=d.steps.map(s=>`<li>${s}</li>`).join("");
+  const mac=(typeof MACRO!=='undefined'&&MACRO[d.id])?MACRO[d.id]:null;
+  const macroSec=mac?`<div class="rsec"><h4>단단지 조성 · 1인분 어림치</h4><div class="macro"><span class="mc">탄 ${mac.c}g</span><span class="mp">단 ${mac.p}g</span><span class="mf">지 ${mac.f}g</span><span class="mk">약 ${mac.kcal} kcal</span></div><p style="font-size:12px;color:var(--mute);margin-top:7px">재료·분량에 따라 달라지는 <b>추정치</b>입니다.${mac.p<12?' 단백질이 낮은 편이니 <b style="color:var(--pine)">두부·달걀·생선</b> 등과 함께 드세요.':''} 정확한 목표량은 임상영양사와 상의하세요.</p></div>`:"";
   return `<div class="recipe">
     <div class="rhead">
       <div class="rname">${d.name}</div>
@@ -438,6 +494,7 @@ function recipeHTML(d){
     <div class="rbody">
       <div class="rsec"><h4>재료</h4><ul>${items}</ul></div>
       <div class="rsec"><h4>조리 순서</h4><ol>${steps}</ol></div>
+      ${macroSec}
       <div class="rtip">💡 <b>저염·건강 포인트</b> — ${d.tip}</div>
       <div class="rsec" style="margin-top:16px"><h4>단위 참고 (g·ml)</h4><p style="font-size:12.5px;color:var(--mute);line-height:1.75">1큰술≈15ml · 1작은술≈5ml · 1컵≈200ml · 밥 1공기≈210g · 두부 1모≈300g · 순두부 1봉≈350g · 물참치 1캔≈100g · 채소 1줌≈50~70g · 생선 1토막≈100g · 마늘 1쪽≈5g · 새우 1마리≈15g · 소금 1작은술≈5g(나트륨≈2000mg) · 1꼬집≈0.3g</p></div>
     </div>
@@ -522,6 +579,18 @@ const META={
   "egg-juk":{broth:"없음",form:"죽",temp:"따뜻"},"chickpea-curry":{broth:"있음",form:"밥",temp:"따뜻"},
   "tuna-bowl":{broth:"없음",form:"밥",temp:"따뜻"},oatmeal:{broth:"없음",form:"죽",temp:"따뜻"}
 };
+const MACRO={
+  salmon:{c:35,p:37,f:22,kcal:480},"tofu-steak":{c:44,p:18,f:16,kcal:430},"chicken-stirfry":{c:43,p:33,f:11,kcal:400},
+  "lentil-stew":{c:45,p:16,f:8,kcal:320},"cod-soup":{c:53,p:26,f:2,kcal:340},bibimbap:{c:55,p:14,f:10,kcal:380},
+  mackerel:{c:51,p:26,f:16,kcal:450},gambas:{c:30,p:21,f:13,kcal:350},"yogurt-bowl":{c:42,p:22,f:11,kcal:330},
+  "miso-soup":{c:55,p:15,f:6,kcal:340},"quinoa-salad":{c:56,p:14,f:11,kcal:400},aglio:{c:63,p:14,f:19,kcal:470},
+  gondre:{c:51,p:6,f:5,kcal:280},"tofu-jorim":{c:48,p:17,f:9,kcal:340},kongnamul:{c:49,p:8,f:2,kcal:250},
+  miyeok:{c:49,p:11,f:8,kcal:310},bugeo:{c:48,p:20,f:9,kcal:340},japchae:{c:48,p:7,f:10,kcal:310},
+  namul:{c:12,p:4,f:7,kcal:120},sundubu:{c:55,p:19,f:11,kcal:420},samgyetang:{c:32,p:38,f:14,kcal:450},
+  jeongol:{c:55,p:14,f:6,kcal:330},"fish-jjim":{c:55,p:27,f:4,kcal:360},kongguksu:{c:70,p:28,f:11,kcal:500},
+  "aehobak-shrimp":{c:50,p:14,f:9,kcal:330},"dak-juk":{c:46,p:20,f:7,kcal:320},"egg-juk":{c:46,p:12,f:10,kcal:320},
+  "chickpea-curry":{c:88,p:17,f:11,kcal:520},"tuna-bowl":{c:53,p:26,f:11,kcal:420},oatmeal:{c:38,p:12,f:9,kcal:280}
+};
 const FILTERS={ broth:{label:"국물",opts:["있음","없음"]}, form:{label:"형태",opts:["밥","면","샐러드","국·탕","죽","반찬"]}, temp:{label:"온도",opts:["따뜻","차가움"]} };
 const fstate={broth:null,form:null,temp:null};
 const filtersEl=document.getElementById('filters');
@@ -552,12 +621,57 @@ function renderGrid(){
   if(list.length===0){ grid.innerHTML='<div class="fcount" style="margin:0">조건에 맞는 메뉴가 없어요. 필터를 줄여보세요.</div>'; return; }
   list.forEach(d=>{ const m=META[d.id]||{};
     const b=document.createElement('button'); b.className='mbtn';
-    b.innerHTML=`<div class="mn">${d.name}</div><div class="mt">${d.en} · ${d.time}</div><div class="mtags">${m.form||''} · ${m.temp||''} · 국물 ${m.broth||''}</div>`;
+    b.innerHTML=`<div class="mn">${d.name}</div><div class="mt">${d.en} · ${d.time}</div><div class="mtags">${m.form||''} · ${m.temp||''} · 국물 ${m.broth||''} · 단 ${(MACRO[d.id]||{}).p||'-'}g</div>`;
     b.onclick=()=>{ document.getElementById('recipeB').innerHTML=recipeHTML(d); window.scrollTo({top:document.getElementById('recipeB').offsetTop-20,behavior:'smooth'}); };
     grid.appendChild(b);
   });
 }
 renderGrid();
+
+/* ---------- MODE T: daily nutrition tracker ---------- */
+const counts={};
+const tselEl=document.getElementById('tsel');
+DISHES.forEach(d=>{
+  const m=MACRO[d.id]||{}, meta=META[d.id]||{};
+  const row=document.createElement('div'); row.className='titem';
+  row.dataset.name=(d.name+' '+(d.en||'')).toLowerCase();
+  row.innerHTML=`<div><div class="tn">${d.name}</div><div class="td">${meta.form||''} · 단 ${m.p||0}g · ${m.kcal||0}kcal</div></div>`+
+    `<div class="stepper"><button data-op="m">−</button><span class="cnt">0</span><button data-op="p">＋</button></div>`;
+  const cnt=row.querySelector('.cnt');
+  row.querySelector('[data-op="p"]').onclick=()=>{counts[d.id]=(counts[d.id]||0)+1;cnt.textContent=counts[d.id];row.classList.add('sel');updateSum();};
+  row.querySelector('[data-op="m"]').onclick=()=>{counts[d.id]=Math.max(0,(counts[d.id]||0)-1);cnt.textContent=counts[d.id];row.classList.toggle('sel',counts[d.id]>0);updateSum();};
+  tselEl.appendChild(row);
+});
+function targets(){
+  const w=+document.getElementById('wKg').value||60;
+  const kcal=Math.round(w*30);
+  return {kcal, p:Math.round(w*1.2), pLo:Math.round(w*1.0), pHi:Math.round(w*1.5), c:Math.round(kcal*0.5/4), f:Math.round(kcal*0.3/9)};
+}
+function pbar(label,val,target,unit,color,type,t){
+  const pct=target?Math.round(val/target*100):0, w=Math.min(100,pct);
+  let status,scol;
+  if(type==='protein'){ if(val<t.pLo){status='부족';scol='#E6B85C';} else if(val>t.pHi){status='충분';scol='#5FBE93';} else {status='적정';scol='#5FBE93';} }
+  else if(type==='kcal'){ if(pct<80){status='부족';scol='#E6B85C';} else if(pct>110){status='초과';scol='#E0885A';} else {status='적정';scol='#5FBE93';} }
+  else { if(pct<80){status='부족';scol='#E6B85C';} else if(pct>120){status='초과';scol='#E0885A';} else {status='적정';scol='#5FBE93';} }
+  return `<div class="pbar"><div class="plab"><span>${label}<span class="pstatus" style="background:${scol}">${status}</span></span><span class="pv">${val} / ${target}${unit} · ${pct}%</span></div><div class="ptrack"><div class="pfill" style="width:${w}%;background:${color}"></div></div></div>`;
+}
+function updateSum(){
+  const t=targets();
+  const ks=document.getElementById('kcalShow'); if(ks) ks.textContent=t.kcal;
+  document.getElementById('targetLine').innerHTML=`목표 — 열량 ${t.kcal}kcal · 단백질 ${t.p}g(범위 ${t.pLo}~${t.pHi}g) · 탄수 ${t.c}g · 지방 ${t.f}g`;
+  let C=0,P=0,F=0,K=0;
+  Object.keys(counts).forEach(id=>{const n=counts[id];if(!n)return;const m=MACRO[id];C+=m.c*n;P+=m.p*n;F+=m.f*n;K+=m.kcal*n;});
+  document.getElementById('sumcard').innerHTML=`<h3>하루 영양 달성률</h3>`+
+    `<div class="sumtot">합계 — 탄 ${C}g · 단 ${P}g · 지 ${F}g · ${K} kcal</div>`+
+    pbar('열량',K,t.kcal,'kcal','#7FC7BD','kcal',t)+
+    pbar('단백질',P,t.p,'g','#5FBE93','protein',t)+
+    pbar('탄수화물',C,t.c,'g','#E6B85C','carb',t)+
+    pbar('지방',F,t.f,'g','#CBAe63','fat',t)+
+    `<p style="font-family:var(--data);font-size:11.5px;color:#B7D0CC;margin-top:8px">목표는 조정 가능한 추정치입니다. 단백질은 치료 중 넉넉히(체중×1.0~1.5g). 정확한 목표는 임상영양사와 상의하세요.</p>`;
+}
+document.getElementById('wKg').oninput=updateSum;
+document.getElementById('msearch').oninput=(e)=>{const q=e.target.value.trim().toLowerCase();[...tselEl.children].forEach(row=>{row.style.display=(!q||(row.dataset.name||'').includes(q))?'':'none';});};
+updateSum();
 
 /* ---------- tabs ---------- */
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
