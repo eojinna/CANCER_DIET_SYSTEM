@@ -150,8 +150,9 @@ Copyright 2026. 나어진 All rights reserved.
   /* filters */
   .filters{display:flex; flex-direction:column; gap:10px; margin-bottom:14px; background:var(--card);
     border:1px solid var(--line); border-radius:14px; padding:14px 15px; box-shadow:var(--shadow)}
-  .fgroup{display:flex; align-items:center; gap:7px; flex-wrap:wrap}
-  .fglabel{font-family:var(--data); font-size:12px; color:var(--pine2); font-weight:600; min-width:42px}
+  .fgroup{display:grid; grid-template-columns:40px 1fr; align-items:start; gap:8px}
+  .fglabel{font-family:var(--data); font-size:12px; color:var(--pine2); font-weight:600; padding-top:8px; white-space:nowrap}
+  .fopts{display:flex; flex-wrap:wrap; gap:7px}
   .fbtn{font-size:13px; font-weight:600; background:#F2F6F5; color:var(--ink); border:1.5px solid var(--line);
     border-radius:999px; padding:6px 13px; cursor:pointer; transition:.12s}
   .fbtn:hover{border-color:var(--pine2)}
@@ -593,7 +594,7 @@ const META={
   salmon:{broth:"없음",form:"밥",temp:"따뜻"},"tofu-steak":{broth:"없음",form:"밥",temp:"따뜻"},
   "chicken-stirfry":{broth:"없음",form:"밥",temp:"따뜻"},"lentil-stew":{broth:"있음",form:"국·탕",temp:"따뜻"},
   "cod-soup":{broth:"있음",form:"국·탕",temp:"따뜻"},bibimbap:{broth:"없음",form:"밥",temp:"따뜻"},
-  mackerel:{broth:"없음",form:"밥",temp:"따뜻"},gambas:{broth:"없음",form:"밥",temp:"따뜻"},
+  mackerel:{broth:"없음",form:"밥",temp:"따뜻"},gambas:{broth:"없음",form:"빵",temp:"따뜻"},
   "yogurt-bowl":{broth:"없음",form:"샐러드",temp:"차가움"},"miso-soup":{broth:"있음",form:"국·탕",temp:"따뜻"},
   "quinoa-salad":{broth:"없음",form:"샐러드",temp:"차가움"},aglio:{broth:"없음",form:"면",temp:"따뜻"},
   gondre:{broth:"없음",form:"밥",temp:"따뜻"},"tofu-jorim":{broth:"없음",form:"반찬",temp:"따뜻"},
@@ -618,15 +619,17 @@ const MACRO={
   "aehobak-shrimp":{c:50,p:14,f:9,kcal:330},"dak-juk":{c:46,p:20,f:7,kcal:320},"egg-juk":{c:46,p:12,f:10,kcal:320},
   "chickpea-curry":{c:88,p:17,f:11,kcal:520},"tuna-bowl":{c:53,p:26,f:11,kcal:420},oatmeal:{c:38,p:12,f:9,kcal:280}
 };
-const FILTERS={ broth:{label:"국물",opts:["있음","없음"]}, form:{label:"형태",opts:["밥","면","샐러드","국·탕","죽","반찬"]}, temp:{label:"온도",opts:["따뜻","차가움"]} };
+const FILTERS={ broth:{label:"국물",opts:["있음","없음"]}, form:{label:"형태",opts:["밥","빵","면","샐러드","국·탕","죽","반찬"]}, temp:{label:"온도",opts:["따뜻","차가움"]} };
 const fstate={broth:null,form:null,temp:null};
 const filtersEl=document.getElementById('filters');
 Object.keys(FILTERS).forEach(key=>{
   const g=document.createElement('div'); g.className='fgroup';
   g.innerHTML=`<span class="fglabel">${FILTERS[key].label}</span>`;
+  const opts=document.createElement('div'); opts.className='fopts';
   const all=document.createElement('button'); all.className='fbtn on'; all.textContent='전체';
-  all.onclick=()=>setFilter(key,null,g); g.appendChild(all);
-  FILTERS[key].opts.forEach(o=>{ const b=document.createElement('button'); b.className='fbtn'; b.textContent=o; b.onclick=()=>setFilter(key,o,g); g.appendChild(b); });
+  all.onclick=()=>setFilter(key,null,g); opts.appendChild(all);
+  FILTERS[key].opts.forEach(o=>{ const b=document.createElement('button'); b.className='fbtn'; b.textContent=o; b.onclick=()=>setFilter(key,o,g); opts.appendChild(b); });
+  g.appendChild(opts);
   filtersEl.appendChild(g);
 });
 function setFilter(key,val,groupEl){
